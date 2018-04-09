@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
  *
  * Created by xuan on 2018/4/3
  */
-public class WordCount {
+public class WordCountCombiner {
 
     public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
 
@@ -64,7 +64,7 @@ public class WordCount {
         Job job = Job.getInstance(conf, "wordCount");
 
         // 设置job的处理类
-        job.setJarByClass(WordCount.class);
+        job.setJarByClass(WordCountCombiner.class);
 
         // 设置作业的输入路径
         FileInputFormat.addInputPath(job, new Path(args[0]));
@@ -79,8 +79,8 @@ public class WordCount {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 
-        // 设置job的Combiner处理类，其实逻辑上与Reduce是一样的
-        // job.setCombinerClass(Reduce.class);
+        // 设置job的Combiner处理类，其实逻辑上与Reduce是一样的，只不过在输出的时候，先在本地Reducer一哈
+        job.setCombinerClass(Reduce.class);
 
         // 设置作业的输出路径
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
